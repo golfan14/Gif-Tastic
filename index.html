@@ -22,9 +22,6 @@
     <!-- Rendered Buttons will get Dumped Here  -->
     <div id="buttons-view"></div>
 
-    <!-- Movies will Get Dumped Dere -->
-    <div id="image-view"></div>
-
     <form id="image-form">
       <label for="image-input">Add an Animal</label>
       <input type="text" id="image-input">
@@ -34,16 +31,19 @@
       <input id="add-image" type="submit" value="Add">
     </form>
 
+    <!-- Movies will Get Dumped Dere -->
+    <div id="image-view"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
       // Initial array of movies
-      var topics = ["Bears", "Giraffes", "Gorillas", "Eagles"];
+      var animals = ["Bear", "Giraffe", "Horse", "Gorilla"];
 
       // displayMovieInfo function re-renders the HTML to display the appropriate content
       function displayImageInfo() {
 
         var animal = $(this).attr("data-name");
-        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + animal + "&api_key=v1GooA6EVG2NMizAx4KtM7zqXwZN6UHO&limit=5";
+        var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + animal + "&api_key=v1GooA6EVG2NMizAx4KtM7zqXwZN6UHO&limit=10";
 
         // Creating an AJAX call for the specific movie button being clicked
         $.ajax({
@@ -51,26 +51,32 @@
           method: "GET"
         }).then(function(response) {
 
-          console.log(response);  
+          console.log(response);
+
+          var gifDiv = $("<div>");
+
+          var image = response.data[0].images_original_url;
 
           // Creating a div to hold the movie
-          var animalDiv = $("<div class='animal'>");
+          var pOne = $("<img>").append(image);
+
+          gifDiv.append(pOne);
 
           // Storing the rating data
           var rating = response.data[0].rating;
 
           // Creating an element to have the rating displayed
-          var pOne = $("<p>").text("Rating: " + rating);
+          var pTwo = $("<img>").text("Rating: " + rating);
 
           // Displaying the rating
-          animalDiv.append(pOne);
+          gifDiv.append(pTwo);
 
 
           // Putting the entire movie above the previous movies
-          $("#image-view").prepend(animalDiv);
+          $("#image-view").prepend(gifDiv);
         });
 
-      }
+      };
 
       // Function for displaying movie data
       function renderButtons() {
@@ -80,7 +86,7 @@
         $("#buttons-view").empty();
 
         // Looping through the array of movies
-        for (var i = 0; i < topics.length; i++) {
+        for (var i = 0; i < animals.length; i++) {
 
           // Then dynamicaly generating buttons for each movie in the array
           // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
@@ -88,13 +94,13 @@
           // Adding a class of movie-btn to our button
           a.addClass("image-btn");
           // Adding a data-attribute
-          a.attr("data-name", topics[i]);
+          a.attr("data-name", animals[i]);
           // Providing the initial button text
-          a.text(topics[i]);
+          a.text(animals[i]);
           // Adding the button to the buttons-view div
           $("#buttons-view").append(a);
         }
-      }
+      };
 
       // This function handles events where a movie button is clicked
       $("#add-image").on("click", function(event) {
@@ -103,7 +109,7 @@
         var animal = $("#image-input").val().trim();
 
         // Adding movie from the textbox to our array
-        topics.push(topics);
+        (animals).push(animal);
 
         // Calling renderButtons which handles the processing of our movie array
         renderButtons();
